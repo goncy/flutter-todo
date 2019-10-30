@@ -1,19 +1,11 @@
 // pages/home_page.dart
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  HomePageState createState() => new HomePageState();
-}
+class HomePage extends StatelessWidget {
+  final int count;
+  final Function onIncrement;
 
-class HomePageState extends State<HomePage> {
-  int counter = 0;
-
-  void increment() {
-    setState(() {
-      this.counter++;
-    });
-  }
+  HomePage({@required this.count, @required this.onIncrement});
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +25,13 @@ class HomePageState extends State<HomePage> {
               new Text(
                 'You have pushed the button this many times:',
               ),
-              new Text(this.counter.toString()),
+              new Text(this.count.toString()),
             ],
           ),
         ),
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: increment,
+        onPressed: this.onIncrement,
         child: new Icon(Icons.add),
       ),
     );
