@@ -1,31 +1,30 @@
-// main.dart
 import 'package:flutter/material.dart';
 
-import 'pages/home.dart';
+import 'pages/todos.dart';
 
-void main() => runApp(new App());
+void main() => runApp(App());
 
 class App extends StatefulWidget {
   @override
-  AppState createState() => new AppState();
+  AppState createState() => AppState();
 }
 
 class AppState extends State<App> {
-  int count = 0;
+  final List<String> todos = [];
 
-  void increment() {
-    setState(() {
-      this.count++;
-    });
+  void add(String todo) {
+    setState(() => todos.add(todo));
+  }
+
+  void remove(String todo) {
+    setState(() => todos.remove(todo));
   }
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'My App',
-      routes: {
-        '/': (context) => new HomePage(count: count, onIncrement: increment)
-      },
+      routes: {'/': (context) => TodosPage(todos: todos, onAdd: add)},
     );
   }
 }
