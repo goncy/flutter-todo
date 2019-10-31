@@ -23,13 +23,11 @@ class AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {
-        '/': (context) => TodosPage(
-              todos: todos,
-              onAdd: add,
-              onRemove: remove,
-            )
-      },
+      home: TodosPage(
+        todos: todos,
+        onAdd: add,
+        onRemove: remove,
+      ),
     );
   }
 }
