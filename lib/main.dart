@@ -16,15 +16,20 @@ class AppState extends State<App> {
     setState(() => todos.add(todo));
   }
 
-  void remove(String todo) {
-    setState(() => todos.remove(todo));
+  void remove(int index) {
+    setState(() => todos.removeAt(index));
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'My App',
-      routes: {'/': (context) => TodosPage(todos: todos, onAdd: add)},
+      routes: {
+        '/': (context) => TodosPage(
+              todos: todos,
+              onAdd: add,
+              onRemove: remove,
+            )
+      },
     );
   }
 }
