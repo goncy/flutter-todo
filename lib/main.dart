@@ -21,13 +21,11 @@ class AppState extends State<App> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: TodosPage(
-        todos: todos,
-        onAdd: add,
-        onRemove: remove,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => MaterialApp(
+        home: TodosPage(
+          todos: todos,
+          onAdd: add,
+          onRemove: remove,
+        ),
+      );
 }
