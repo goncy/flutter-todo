@@ -6,29 +6,38 @@ import './pages/loading.dart';
 import './entities/todo.dart';
 import './resources/todo.dart';
 
-void main() => runApp(App());
+void main() async {
+  final TodoResource resource = TodoResource();
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await resource.open();
+
+  runApp(App(resource: resource));
+}
 
 class App extends StatefulWidget {
+  final TodoResource resource;
+
+  App({@required this.resource});
+
   @override
   AppState createState() => AppState();
 }
 
 class AppState extends State<App> {
   final List<Todo> todos = [];
-  final TodoResource resource = TodoResource();
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
 
-    initialize();
+    fetch();
   }
 
-  initialize() async {
-    await resource.open();
-
-    final List<Todo> results = await resource.fetch();
+  fetch() async {
+    final List<Todo> results = await widget.resource.fetch();
 
     setState(() {
       todos.addAll(results);
@@ -37,13 +46,13 @@ class AppState extends State<App> {
   }
 
   Future<void> add(Todo todo) async {
-    await resource.add(todo);
+    await widget.resource.add(todo);
 
     setState(() => todos.add(todo));
   }
 
   Future<void> remove(int id) async {
-    await resource.remove(id);
+    await widget.resource.remove(id);
 
     setState(() => todos.removeWhere((todo) => todo.id == id));
   }
@@ -51,7 +60,7 @@ class AppState extends State<App> {
   Future<void> activate(Todo todo) async {
     todo.status = "active";
 
-    await resource.update(todo);
+    await widget.resource.update(todo);
 
     setState(() => todo);
   }
@@ -59,7 +68,7 @@ class AppState extends State<App> {
   Future<void> complete(Todo todo) async {
     todo.status = "completed";
 
-    await resource.update(todo);
+    await widget.resource.update(todo);
 
     setState(() => todo);
   }
