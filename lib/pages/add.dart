@@ -42,7 +42,6 @@ class AddPageState extends State<AddPage> {
             ),
             SizedBox(
               child: RaisedButton(
-                color: Colors.blue,
                 onPressed: () {
                   if (form.currentState.validate()) {
                     form.currentState.save();
@@ -50,7 +49,7 @@ class AddPageState extends State<AddPage> {
                     Navigator.pop(context);
                   }
                 },
-                child: Text('Add todo', style: TextStyle(color: Colors.white)),
+                child: Text('Add todo'),
               ),
               width: double.infinity,
             )
