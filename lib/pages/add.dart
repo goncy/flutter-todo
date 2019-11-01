@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../entities/todo.dart';
+
 class AddPage extends StatefulWidget {
   final Function onSubmit;
 
@@ -45,7 +47,10 @@ class AddPageState extends State<AddPage> {
                 onPressed: () {
                   if (form.currentState.validate()) {
                     form.currentState.save();
-                    widget.onSubmit(todo);
+                    widget.onSubmit(Todo(
+                        id: DateTime.now().millisecondsSinceEpoch,
+                        text: todo,
+                        status: 'active'));
                     Navigator.pop(context);
                   }
                 },

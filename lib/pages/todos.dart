@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../entities/todo.dart';
+
 import './add.dart';
 
 class TodosPage extends StatelessWidget {
-  final List<String> todos;
+  final List<Todo> todos;
   final Function onAdd;
   final Function onRemove;
 
@@ -20,11 +22,11 @@ class TodosPage extends StatelessWidget {
           ? ListView.builder(
               itemBuilder: (context, i) => i < this.todos.length
                   ? ListTile(
-                      title: Text(this.todos[i]),
+                      title: Text(this.todos[i].text),
                       trailing: IconButton(
                         icon: Icon(Icons.delete),
                         color: Colors.red,
-                        onPressed: () => this.onRemove(i),
+                        onPressed: () => this.onRemove(this.todos[i].id),
                       ),
                     )
                   : null)
