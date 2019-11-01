@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
+import './pages/todos.dart';
+import './pages/loading.dart';
 import './entities/todo.dart';
-
-import 'pages/todos.dart';
+import './resources/todo.dart';
 
 void main() => runApp(App());
 
@@ -17,7 +15,8 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   final List<Todo> todos = [];
-  Future<Database> database;
+  final TodoResource resource = TodoResource();
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -27,76 +26,56 @@ class AppState extends State<App> {
   }
 
   initialize() async {
-    await initializeDatabase();
-    await fetchTodos();
-  }
+    await resource.open();
 
-  initializeDatabase() async {
-    database = openDatabase(
-      // Set the path to the database.
-      join(await getDatabasesPath(), 'todos_database.db'),
-      // When the database is first created, create a table to store dogs.
-      onCreate: (db, version) {
-        // Run the CREATE TABLE statement on the database.
-        return db.execute(
-          "CREATE TABLE todos(id INTEGER PRIMARY KEY, text TEXT, status TEXT)",
-        );
-      },
-      // Set the version. This executes the onCreate function and provides a
-      // path to perform database upgrades and downgrades.
-      version: 1,
-    );
-  }
+    final List<Todo> results = await resource.fetch();
 
-  fetchTodos() async {
-    final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('todos');
-
-    final List<Todo> results = List.generate(maps.length, (i) {
-      return Todo(
-        id: maps[i]['id'],
-        text: maps[i]['text'],
-        status: maps[i]['status'],
-      );
+    setState(() {
+      todos.addAll(results);
+      isLoading = false;
     });
-
-    setState(() => todos.addAll(results));
   }
 
   Future<void> add(Todo todo) async {
-    print(todo);
-
-    final Database db = await database;
-
-    await db.insert(
-      'todos',
-      todo.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    await resource.add(todo);
 
     setState(() => todos.add(todo));
   }
 
   Future<void> remove(int id) async {
-    final db = await database;
-
-    await db.delete(
-      'todos',
-      where: "id = ?",
-      whereArgs: [id],
-    );
+    await resource.remove(id);
 
     setState(() => todos.removeWhere((todo) => todo.id == id));
+  }
+
+  Future<void> activate(Todo todo) async {
+    todo.status = "active";
+
+    await resource.update(todo);
+
+    setState(() => todo);
+  }
+
+  Future<void> complete(Todo todo) async {
+    todo.status = "completed";
+
+    await resource.update(todo);
+
+    setState(() => todo);
   }
 
   @override
   Widget build(BuildContext context) => MaterialApp(
         theme: ThemeData(
             primaryColor: Colors.greenAccent, accentColor: Colors.greenAccent),
-        home: TodosPage(
-          todos: todos,
-          onAdd: add,
-          onRemove: remove,
-        ),
+        home: isLoading
+            ? LoadingPage()
+            : TodosPage(
+                todos: todos,
+                onAdd: add,
+                onRemove: remove,
+                onActivate: activate,
+                onComplete: complete,
+              ),
       );
 }

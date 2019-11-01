@@ -1,7 +1,7 @@
 class Todo {
   final int id;
-  final String text;
-  final String status;
+  String text;
+  String status;
 
   Todo({this.id, this.text, this.status});
 
